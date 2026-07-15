@@ -1,0 +1,2 @@
+export default `:root{--color-dark-bg: #1f1f1f;--color-primary: #dd0031;--color-accent: #e535ab;--color-light-text: #ffffff;--color-dark-text: #212121;--color-code-bg: #2a2a2a;--spacing-small: 10px;--spacing-medium: 20px;--spacing-large: 40px;--font-family: "Rajdhani", sans-serif}html,body{margin:0;padding:0;box-sizing:border-box;background-color:var(--color-dark-bg);color:var(--color-light-text);font-family:var(--font-family)}
+`;

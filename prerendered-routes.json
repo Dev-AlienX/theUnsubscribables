@@ -1,0 +1,10 @@
+{
+  "routes": {
+    "/": {},
+    "/behavior-subject": {},
+    "/observable": {},
+    "/observer": {},
+    "/replay-subject": {},
+    "/subject": {}
+  }
+}

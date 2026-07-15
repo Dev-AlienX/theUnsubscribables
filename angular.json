@@ -69,7 +69,8 @@
               "buildTarget": "theUnsubscribables:build:production"
             },
             "development": {
-              "buildTarget": "theUnsubscribables:build:development"
+              "buildTarget": "theUnsubscribables:build:development",
+              "port": 4201
             }
           },
           "defaultConfiguration": "development"

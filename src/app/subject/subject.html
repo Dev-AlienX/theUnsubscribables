@@ -1,0 +1,38 @@
+<div class="content-panel">
+  <header class="content-header">
+    <h1>Subject</h1>
+  </header>
+  <section class="summary">
+    <p>
+      A Subject is a special type of Observable that allows values to be multicasted to many
+      Observers. While plain Observables are unicast (each subscribed Observer owns an independent
+      execution of the Observable), Subjects are multicast.
+    </p>
+  </section>
+  <section class="code-section">
+    <div class="code-block">
+      <h3 class="code-title">component.ts</h3>
+      <pre><code #tsCode class="language-typescript" [textContent]="componentCode"></code></pre>
+    </div>
+    <div class="code-block">
+      <h3 class="code-title">component.html</h3>
+      <pre><code #htmlCodeRef class="language-html" [textContent]="htmlCode"></code></pre>
+    </div>
+  </section>
+  <section class="output-section">
+    <h2>Output</h2>
+    <div class="output-container">
+      <ol>
+        @for (item of outputArray; track $index) {
+          <li appConsoleLogComment>{{ item }}</li>
+        }
+      </ol>
+    </div>
+  </section>
+  <section class="what-if-section">
+    <h2>What if?</h2>
+    <div class="what-if-container">
+      <!-- "What if" content goes here -->
+    </div>
+  </section>
+</div>

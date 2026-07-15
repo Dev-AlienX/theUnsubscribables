@@ -1,0 +1,36 @@
+<div class="content-panel">
+  <header class="content-header">
+    <h1>ReplaySubject</h1>
+  </header>
+  <section class="summary">
+    <p>
+      A ReplaySubject is a type of Subject that can buffer a specified number of values that it has emitted. When a new Observer subscribes, it will receive the buffered values.
+    </p>
+  </section>
+  <section class="code-section">
+    <div class="code-block">
+      <h3 class="code-title">component.ts</h3>
+      <pre><code #tsCode class="language-typescript" [textContent]="componentCode"></code></pre>
+    </div>
+    <div class="code-block">
+      <h3 class="code-title">component.html</h3>
+      <pre><code #htmlCodeRef class="language-html" [textContent]="htmlCode"></code></pre>
+    </div>
+  </section>
+  <section class="output-section">
+    <h2>Output</h2>
+    <div class="output-container">
+      <ol>
+        @for (item of outputArray; track $index) {
+          <li appConsoleLogComment>{{ item }}</li>
+        }
+      </ol>
+    </div>
+  </section>
+  <section class="what-if-section">
+    <h2>What if?</h2>
+    <div class="what-if-container">
+      <!-- "What if" content goes here -->
+    </div>
+  </section>
+</div>

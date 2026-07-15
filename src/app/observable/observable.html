@@ -1,0 +1,38 @@
+<div class="content-panel">
+  <header class="content-header">
+    <h1>Observable</h1>
+  </header>
+  <section class="summary">
+    <p>
+      An Observable is a unique object, similar to a Promise, that can help manage async code.
+      Observables are not part of the JavaScript language so we need to rely on a library to use
+      them. In this tutorial, we will be using RxJS.
+    </p>
+  </section>
+  <section class="code-section">
+    <div class="code-block">
+      <h3 class="code-title">component.ts</h3>
+      <pre><code #tsCode class="language-typescript" [textContent]="componentCode"></code></pre>
+    </div>
+    <div class="code-block">
+      <h3 class="code-title">component.html</h3>
+      <pre><code #htmlCodeRef class="language-html" [textContent]="htmlCode"></code></pre>
+    </div>
+  </section>
+  <section class="output-section">
+    <h2>Output</h2>
+    <div class="output-container">
+      <ol>
+        @for (item of outputArray; track $index) {
+          <li appConsoleLogComment>{{ item }}</li>
+        }
+      </ol>
+    </div>
+  </section>
+  <section class="what-if-section">
+    <h2>What if?</h2>
+    <div class="what-if-container">
+      <!-- "What if" content goes here -->
+    </div>
+  </section>
+</div>

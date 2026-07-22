@@ -1,0 +1,68 @@
+.no-bullets {
+  list-style-type: none; /* Removes the dots */
+  padding: 0; /* Optional: Removes default left indentation */
+  margin: 0; /* Optional: Removes default spacing */
+}
+
+.question-answer-list {
+  list-style-type: none; /* Removes the dots */
+  padding: 0; /* Optional: Removes default left indentation */
+  margin: 0;
+  padding-left: 20px; /* Optional: Removes default spacing */
+
+  .answer{
+    padding-left: 14px; /* Optional: Adds spacing for the answer */
+  }
+}
+
+.question-answer-list.collapsed {
+  display: none; /* Hides the answer when collapsed */
+}
+
+.question-answer-section {
+  border-radius: 10px;
+  border: 1px solid gray;
+  margin: unset;
+  padding: 10px;
+  margin-bottom: 10px;
+
+}
+
+.section-title {
+  margin: unset;
+  padding: 10px;
+  padding-left: 0px;
+  width: 100%;
+  span {
+    display: inline-block;
+    position: relative; /* Adjust as needed for spacing */
+    width: 14px; /* Adjust width as needed */
+    height: 14px; /* Adjust height as needed */
+    margin-right: 5px; /* Optional: Adds spacing between the icon and text */
+  }
+  span::after {
+    content: '⌄'; /* Injects new text */
+    top: -10px;
+    position: absolute;
+    left: 2px;
+  }
+
+  span.open {
+    display: inline-block;
+    position: relative; /* Adjust as needed for spacing */
+    width: 14px; /* Adjust width as needed */
+    height: 14px;
+  }
+
+  span.open::after {
+    content: '>'; /* Injects new text */
+    top: -4px;
+    position: absolute;
+    left: 2px;
+  }
+}
+
+
+.main-title{
+    margin-top: 0px;
+}

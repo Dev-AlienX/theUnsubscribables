@@ -4,6 +4,7 @@ import { ObserverComponent } from './observer/observer';
 import { SubjectComponent } from './subject/subject';
 import { BehaviorSubjectComponent } from './behavior-subject/behavior-subject';
 import { ReplaySubjectComponent } from './replay-subject/replay-subject';
+import { InterviewQuestions } from './pages/interview-questions/interview-questions';
 
 export const routes: Routes = [
   { path: 'observable', component: ObservableComponent },
@@ -11,5 +12,6 @@ export const routes: Routes = [
   { path: 'subject', component: SubjectComponent },
   { path: 'behavior-subject', component: BehaviorSubjectComponent },
   { path: 'replay-subject', component: ReplaySubjectComponent },
+  { path: 'interview-questions', component: InterviewQuestions },
   { path: '', redirectTo: '/observable', pathMatch: 'full' },
 ];

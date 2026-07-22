@@ -1,0 +1,20 @@
+<main class="container question-answer-container">
+  <h2 class="main-title">Angular Senior Engineer Interview Questions</h2>
+  @for (item of questionAnswerMetaData$ | async; track item.sectionId) {
+    <section class="question-answer-section">
+      <h3 class="section-title" (click)="item.active = !item.active"> <span [class.open]="item.active === true" ></span>{{ item.section }}</h3>
+      <ul class="question-answer-list" [class.collapsed]="item.active === true">
+        @for (question of item.QnA; track question.questionId) {
+          <li class="question-answer-list-item">
+            <article class="article-qna">
+              <p class="question">{{ question.question }}</p>
+              <p class="answer">{{ question.answer }}</p>
+              <!-- <button class="copy-button" (click)="getExample(question)">Copy</button> -->
+            </article>
+            <hr class="divider" />
+          </li>
+        }
+      </ul>
+    </section>
+  }
+</main>

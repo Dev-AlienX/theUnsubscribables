@@ -1,0 +1,872 @@
+[
+  {
+    "section": "Signals & Fine-Grained Reactivity (Modern Angular)",
+    "sectionNameKey": "SEC_SignalsFineGrainedReactivity",
+    "sectionId": "sec_01",
+    "QnA": [
+      {
+        "questionId": "q_01_01",
+        "question": "1. Signals vs. RxJS: Why does Angular introduce Signals when RxJS already handles async reactivity? When should you use which?",
+        "questionKey": "QES_SignalsVsRxJS",
+        "answer": "Signals provide synchronous, fine-grained reactivity without subscriptions, automatically tracking dependencies to optimize change detection without Zone.js. RxJS handles asynchronous, time-based event streams requiring subscriptions. Use Signals for synchronous UI state management and data binding. Retain RxJS for complex asynchronous pipelines, race conditions, and HTTP requests.",
+        "answerKey": "ANS_SignalsVsRxJS",
+        "sectionId": "sec_01"
+      },
+      {
+        "questionId": "q_01_02",
+        "question": "2. Glitch-Free Execution: How do Signals internally solve the \"glitch\" problem (temporary inconsistent states) found in some reactive systems?",
+        "questionKey": "QES_GlitchFreeExecution",
+        "answer": "Signals achieve glitch-free execution through a push-pull mechanism. When a source signal changes, it pushes a dirty notification to dependents, marking them stale without recalculating immediately. The new value is only pulled (recalculated) when explicitly read by the UI, ensuring intermediate inconsistent states are never rendered.",
+        "answerKey": "ANS_GlitchFreeExecution",
+        "sectionId": "sec_01"
+      },
+      {
+        "questionId": "q_01_03",
+        "question": "3. computed() Mechanical Depth: How does a computed signal dynamically track its dependencies during execution without explicit registration?",
+        "questionKey": "QES_ComputedMechanicalDepth",
+        "answer": "computed() tracks dependencies dynamically by maintaining an active consumer context during execution. When evaluated, it records any signal read within its scope as a dependency. If branch logic changes and a previously read signal is bypassed, it automatically unregisters that dependency, preventing unnecessary recalculations.",
+        "answerKey": "ANS_ComputedMechanicalDepth",
+        "sectionId": "sec_01"
+      },
+      {
+        "questionId": "q_01_04",
+        "question": "4. effect() Cleanup: What happens if an effect() executes an asynchronous task? How do you prevent memory leaks using onCleanup?",
+        "questionKey": "QES_EffectCleanup",
+        "answer": "If effect() runs async tasks, subsequent executions might overlap, causing race conditions or leaks. onCleanup provides a callback function to cancel pending async operations, such as clearing timeouts or aborting HTTP requests, before the effect re-executes or is destroyed, ensuring clean memory management.",
+        "answerKey": "ANS_EffectCleanup",
+        "sectionId": "sec_01"
+      },
+      {
+        "questionId": "q_01_05",
+        "question": "5. Signal Mutation vs. Untracked: Explain the behavioral difference between modifying a signal value via .set() / .update() and reading it using untracked().",
+        "questionKey": "QES_SignalMutationVsUntracked",
+        "answer": "Modifying a signal via .set() or .update() actively pushes dirty notifications to all consumers. Reading a signal via untracked() accesses its current value without registering the read as a dependency in the current reactive context, preventing unwanted reactive re-evaluations when the signal changes.",
+        "answerKey": "ANS_SignalMutationVsUntracked",
+        "sectionId": "sec_01"
+      },
+      {
+        "questionId": "q_01_06",
+        "question": "6. Interoperability: How do toSignal() and toObservable() handle context propagation and execution safety behind the scenes?",
+        "questionKey": "QES_Interoperability",
+        "answer": "toSignal() subscribes to an Observable, tying its lifecycle to the injection context and automatically unsubscribing upon destruction. toObservable() wraps a signal in an effect, emitting values to the stream when the signal changes. Both seamlessly bridge synchronous state with asynchronous RxJS pipelines while managing memory.",
+        "answerKey": "ANS_Interoperability",
+        "sectionId": "sec_01"
+      },
+      {
+        "questionId": "q_01_07",
+        "question": "7. Two-Way Binding with Signals: How do you implement two-way data binding using the modern model() input syntax?",
+        "questionKey": "QES_TwoWayBindingSignals",
+        "answer": "Use the modern model() function to create a signal-based input that also serves as an output. It provides a .set() method to modify the value internally. When updated, it automatically emits the new value to the parent component via the traditional [(property)] banana-in-a-box template syntax.",
+        "answerKey": "ANS_TwoWayBindingSignals",
+        "sectionId": "sec_01"
+      },
+      {
+        "questionId": "q_01_08",
+        "question": "8. Signal-Based Components: What structural changes happen to an application when moving to a purely signal-based component design?",
+        "questionKey": "QES_SignalBasedComponents",
+        "answer": "Transitioning to signal-based components eliminates the need for Zone.js. ChangeDetectionStrategy.OnPush becomes standard. Lifecycle hooks like ngOnChanges are replaced by computed or effect. The architecture shifts from hierarchical checking to fine-grained, localized DOM updates, drastically improving runtime performance and rendering speed.",
+        "answerKey": "ANS_SignalBasedComponents",
+        "sectionId": "sec_01"
+      },
+      {
+        "questionId": "q_01_09",
+        "question": "9. Writable vs. Read-Only: How can you explicitly expose a read-only view of a writable signal to child components to maintain architectural boundaries?",
+        "questionKey": "QES_WritableVsReadOnly",
+        "answer": "To maintain architectural boundaries, expose a WritableSignal as a read-only view using the .asReadonly() method. This prevents child components from mutating the state directly, enforcing unidirectional data flow while still allowing them to reactively consume the state changes triggered by the parent.",
+        "answerKey": "ANS_WritableVsReadOnly",
+        "sectionId": "sec_01"
+      },
+      {
+        "questionId": "q_01_10",
+        "question": "10. Signal Inputs Lifecycle: How do Signal-based inputs modify traditional lifecycles? Why are they safer than @Input() combined with ngOnChanges?",
+        "questionKey": "QES_SignalInputsLifecycle",
+        "answer": "Signal inputs do not rely on ngOnChanges to detect modifications. Changes naturally propagate through reactive primitives like computed(). This is safer and more predictable, guaranteeing values are resolved synchronously before execution, eliminating the timing issues and imperative type-checking overhead of traditional @Input().",
+        "answerKey": "ANS_SignalInputsLifecycle",
+        "sectionId": "sec_01"
+      }
+    ]
+  },
+  {
+    "section": "Advanced Change Detection & Zoneless Architecture",
+    "sectionNameKey": "SEC_AdvancedChangeDetection",
+    "sectionId": "sec_02",
+    "QnA": [
+      {
+        "questionId": "q_02_11",
+        "question": "11. LView and TView: Explain Angular’s internal LView (Logical View) and TView (Template View) data structures and how change detection traverses them.",
+        "questionKey": "QES_LViewTView",
+        "answer": "TView stores static, blueprint information about a template, like DOM instructions, shared across instances. LView stores the dynamic state for a specific component instance. During change detection, Angular iterates over the LView array, using TView instructions to efficiently update the DOM.",
+        "answerKey": "ANS_LViewTView",
+        "sectionId": "sec_02"
+      },
+      {
+        "questionId": "q_02_12",
+        "question": "12. Going Zoneless: How do you configure and run a production Angular application completely without zone.js?",
+        "questionKey": "QES_GoingZoneless",
+        "answer": "Configure a zoneless application by providing provideExperimentalZonelessChangeDetection() in the application bootstrap and removing zone.js from polyfills. Angular will rely on built-in scheduler APIs and reactive primitives like Signals to trigger change detection tick cycles, eliminating Zone's monkey-patching overhead.",
+        "answerKey": "ANS_GoingZoneless",
+        "sectionId": "sec_02"
+      },
+      {
+        "questionId": "q_02_13",
+        "question": "13. ChangeDetectionStrategy.OnPush Triggers: What exactly marks an OnPush component as dirty? Name the four specific scenarios.",
+        "questionKey": "QES_OnPushTriggers",
+        "answer": "An OnPush component is marked dirty when: 1) An input reference changes. 2) An event bound in the template fires. 3) An Observable linked to the async pipe emits a new value. 4) A Signal read in the template updates. markForCheck() also manually triggers it.",
+        "answerKey": "ANS_OnPushTriggers",
+        "sectionId": "sec_02"
+      },
+      {
+        "questionId": "q_02_14",
+        "question": "14. markForCheck() vs. detectChanges(): What is the difference in execution scope, performance overhead, and traversal depth between these two methods?",
+        "questionKey": "QES_MarkForCheckVsDetectChanges",
+        "answer": "markForCheck() traverses upwards, marking ancestors dirty, deferring DOM updates until the next scheduled change detection cycle. detectChanges() synchronously forces an immediate, localized change detection run on the component and its children, bypassing the scheduler. markForCheck is generally more performant.",
+        "answerKey": "ANS_MarkForCheckVsDetectChanges",
+        "sectionId": "sec_02"
+      },
+      {
+        "questionId": "q_02_15",
+        "question": "15. NgZone Macro/Microtasks: How does NgZone wrap browser asynchronous APIs? How does it distinguish between microtasks and macrotasks?",
+        "questionKey": "QES_NgZoneTasks",
+        "answer": "NgZone monkey-patches browser APIs. It distinguishes microtasks (Promises, MutationObservers) from macrotasks (setTimeout, HTTP). NgZone triggers change detection when the microtask queue empties after a macrotask completes, ensuring the UI accurately reflects all state mutations from the asynchronous execution.",
+        "answerKey": "ANS_NgZoneTasks",
+        "sectionId": "sec_02"
+      },
+      {
+        "questionId": "q_02_16",
+        "question": "16. runOutsideAngular() Execution: What architectural use cases require running operations outside Angular's zone, and how do you re-enter safely?",
+        "questionKey": "QES_RunOutsideAngular",
+        "answer": "Use runOutsideAngular() for high-frequency DOM events (scroll, mousemove) to prevent continuous, expensive change detection cycles. To re-enter context and update the UI, explicitly wrap the final state mutation inside runInsideAngular(), ensuring the framework registers the final change.",
+        "answerKey": "ANS_RunOutsideAngular",
+        "sectionId": "sec_02"
+      },
+      {
+        "questionId": "q_02_17",
+        "question": "17. ExpressionChangedAfterItHasBeenCheckedError: What is the root cause of this error in terms of the verification phase? How do you fix it architecturally rather than using setTimeout?",
+        "questionKey": "QES_ExpressionChangedError",
+        "answer": "This occurs in development when a binding changes between the initial change detection phase and the verification phase. Fix it architecturally by enforcing unidirectional data flow so children do not synchronously mutate parent state, or by using Signals to prevent inconsistent evaluations.",
+        "answerKey": "ANS_ExpressionChangedError",
+        "sectionId": "sec_02"
+      },
+      {
+        "questionId": "q_02_18",
+        "question": "18. Detaching Change Detectors: Explain a scenario where manually invoking cdRef.detach() and cdRef.reattach() is superior to using OnPush.",
+        "questionKey": "QES_DetachingChangeDetectors",
+        "answer": "Manually calling detach() is superior for components receiving massive data streams like WebSockets where OnPush evaluation is too costly. Detaching freezes the view. You can process thousands of updates internally, then call reattach() and detectChanges() periodically to render batched UI updates.",
+        "answerKey": "ANS_DetachingChangeDetectors",
+        "sectionId": "sec_02"
+      },
+      {
+        "questionId": "q_02_19",
+        "question": "19. Scheduler Hooking: How does Angular manage the dirty-checking queue when multiple Signals update simultaneously during a single event loop tick?",
+        "questionKey": "QES_SchedulerHooking",
+        "answer": "When multiple signals update synchronously within a single tick, Angular's scheduler coalesces these notifications. The framework queues a single microtask to execute the change detection cycle, preventing redundant DOM re-rendering and ensuring the view updates only once.",
+        "answerKey": "ANS_SchedulerHooking",
+        "sectionId": "sec_02"
+      },
+      {
+        "questionId": "q_02_20",
+        "question": "20. Event Coalescing: What is zone event coalescing, and how does enabling it optimize rendering performance for deeply nested component trees?",
+        "questionKey": "QES_EventCoalescing",
+        "answer": "Zone event coalescing delays change detection until the current browser event loop tick finishes. If a bubbling event triggers multiple listeners in a nested tree, coalescing prevents running change detection for every listener, combining them into one efficient cycle.",
+        "answerKey": "ANS_EventCoalescing",
+        "sectionId": "sec_02"
+      }
+    ]
+  },
+  {
+    "section": "Dependency Injection (DI) & Token Resolution",
+    "sectionNameKey": "SEC_DependencyInjection",
+    "sectionId": "sec_03",
+    "QnA": [
+      {
+        "questionId": "q_03_21",
+        "question": "21. Hierarchical Injector Trees: Map out the resolution path from NodeInjector to EnvironmentInjector. Where do standalone components fit?",
+        "questionKey": "QES_HierarchicalInjectors",
+        "answer": "Hierarchy flows from NodeInjector (component-level) up to the EnvironmentInjector (application-level). Standalone components resolve dependencies first through their NodeInjector and parent elements. If unfound, resolution falls back to the EnvironmentInjector where providedIn: 'root' services reside.",
+        "answerKey": "ANS_HierarchicalInjectors",
+        "sectionId": "sec_03"
+      },
+      {
+        "questionId": "q_03_22",
+        "question": "22. providedIn: 'root' vs. Module Providers: What are the tree-shaking and bundle-size implications of providing a service in providedIn: 'root' versus an NgModule array?",
+        "questionKey": "QES_ProvidedInRoot",
+        "answer": "providedIn: 'root' enables tree-shaking; if never injected, the compiler removes it, reducing bundle size. Providing a service in an NgModule array forces its inclusion in the bundle regardless of usage, preventing tree-shaking and needlessly increasing payload.",
+        "answerKey": "ANS_ProvidedInRoot",
+        "sectionId": "sec_03"
+      },
+      {
+        "questionId": "q_03_23",
+        "question": "23. Resolution Modifiers: Explain the mechanical differences between @Optional(), @SkipSelf(), @Self(), and @Host().",
+        "questionKey": "QES_ResolutionModifiers",
+        "answer": "@Optional() returns null if missing. @SkipSelf() bypasses the current injector, starting at the parent. @Self() restricts resolution strictly to the current component. @Host() stops resolution at the host component, preventing it from searching higher up the tree.",
+        "answerKey": "ANS_ResolutionModifiers",
+        "sectionId": "sec_03"
+      },
+      {
+        "questionId": "q_03_24",
+        "question": "24. viewProviders vs. providers: Why would a component developer use viewProviders over providers? How does this protect content projection (<ng-content>)?",
+        "questionKey": "QES_ViewProviders",
+        "answer": "viewProviders limits dependency visibility strictly to the component's view template. Elements projected via <ng-content> cannot access these services. This protects internal component state from being accessed or manipulated by external projected content, enforcing strict encapsulation.",
+        "answerKey": "ANS_ViewProviders",
+        "sectionId": "sec_03"
+      },
+      {
+        "questionId": "q_03_25",
+        "question": "25. InjectionToken Factory Functions: How do you leverage an InjectionToken with a factory method to conditionally instantiate services based on environment configurations?",
+        "questionKey": "QES_InjectionTokenFactory",
+        "answer": "Define an InjectionToken with a factory function that executes at runtime. Inside the factory, use inject() to access environment variables. This allows you to dynamically instantiate and return specific service implementations based on the active environment securely.",
+        "answerKey": "ANS_InjectionTokenFactory",
+        "sectionId": "sec_03"
+      },
+      {
+        "questionId": "q_03_26",
+        "question": "26. Circular Dependency Resolution: How do you resolve a circular dependency between two heavily utilized services using forwardRef()?",
+        "questionKey": "QES_CircularDependency",
+        "answer": "Use forwardRef() to create an indirect reference, deferring the evaluation of the dependent class until after initialization. This prevents runtime undefined errors caused by two classes attempting to inject each other before their definitions are parsed.",
+        "answerKey": "ANS_CircularDependency",
+        "sectionId": "sec_03"
+      },
+      {
+        "questionId": "q_03_27",
+        "question": "27. Multi-Providers: How do multi-providers work? Give a concrete example of creating a custom multi-provider plug-in system (e.g., custom HTTP_INTERCEPTORS).",
+        "questionKey": "QES_MultiProviders",
+        "answer": "Multi-providers associate multiple values with one token, returning an array. For HTTP_INTERCEPTORS, setting multi: true lets you register custom interceptors. Angular aggregates all registered interceptors and executes them sequentially, creating a highly extensible plugin architecture.",
+        "answerKey": "ANS_MultiProviders",
+        "sectionId": "sec_03"
+      },
+      {
+        "questionId": "q_03_28",
+        "question": "28. Functional DI vs. Class-Based: How does the functional inject() token pattern differ from constructor injection regarding execution context and testing flexibility?",
+        "questionKey": "QES_FunctionalDIVsClass",
+        "answer": "The functional inject() eliminates bulky constructor signatures and simplifies inheritance by removing super() calls. It enforces strict architectural flow since it only works during the injection context, and makes unit testing easier by allowing mock overrides directly within execution.",
+        "answerKey": "ANS_FunctionalDIVsClass",
+        "sectionId": "sec_03"
+      },
+      {
+        "questionId": "q_03_29",
+        "question": "29. providedIn: 'any' vs. providedIn: 'platform': In a micro-frontend or multi-app monorepo setup, what are the isolation behaviors of these two scopes?",
+        "questionKey": "QES_ProvidedInAnyVsPlatform",
+        "answer": "providedIn: 'any' creates a unique service instance for every lazily loaded module, isolating state. providedIn: 'platform' shares a single singleton instance across all Angular applications running on the same page, allowing state sharing across micro-frontends.",
+        "answerKey": "ANS_ProvidedInAnyVsPlatform",
+        "sectionId": "sec_03"
+      },
+      {
+        "questionId": "q_03_30",
+        "question": "30. Dynamic Injector Creation: How do you programmatically construct a custom injector tree using Injector.create() for runtime component instantiation?",
+        "questionKey": "QES_DynamicInjector",
+        "answer": "Use Injector.create({ providers: [...], parent: this.injector }) to build a new injector. This allows passing custom, context-specific tokens to dynamically instantiated components or embedded views at runtime, ensuring access to specific data without polluting the global environment.",
+        "answerKey": "ANS_DynamicInjector",
+        "sectionId": "sec_03"
+      }
+    ]
+  },
+  {
+    "section": "Advanced RxJS Patterns & State Management",
+    "sectionNameKey": "SEC_AdvancedRxJS",
+    "sectionId": "sec_04",
+    "QnA": [
+      {
+        "questionId": "q_04_31",
+        "question": "31. Higher-Order Mapping Operators: Compare switchMap, mergeMap, concatMap, and exhaustMap. Detail exactly what goes wrong when the incorrect operator is chosen for a transactional payment request.",
+        "questionKey": "QES_HigherOrderMapping",
+        "answer": "switchMap cancels previous requests, mergeMap runs concurrently, concatMap queues sequentially, exhaustMap ignores new requests until finished. For payments, switchMap is dangerous: clicking twice locally cancels the first request, but the server might process it, causing double billing.",
+        "answerKey": "ANS_HigherOrderMapping",
+        "sectionId": "sec_04"
+      },
+      {
+        "questionId": "q_04_32",
+        "question": "32. Memory Leak Mitigation: Explain how takeUntilDestroyed() handles unsubscriptions under the hood compared to the traditional takeUntil(this.destroy$) pattern.",
+        "questionKey": "QES_MemoryLeakMitigation",
+        "answer": "takeUntilDestroyed() hooks into the component's injection context to detect destruction, seamlessly unsubscribing from the stream. This eliminates the boilerplate of manually creating a Subject and calling next() in ngOnDestroy, significantly reducing human error and memory leaks.",
+        "answerKey": "ANS_MemoryLeakMitigation",
+        "sectionId": "sec_04"
+      },
+      {
+        "questionId": "q_04_33",
+        "question": "33. Multicasting Observables: Differentiate between Subject, BehaviorSubject, ReplaySubject, and AsyncSubject regarding late subscriptions and internal state storage.",
+        "questionKey": "QES_MulticastingObservables",
+        "answer": "Subject emits only to active subscribers. BehaviorSubject stores the latest value for instant emission. ReplaySubject stores a history of multiple past values for late subscribers. AsyncSubject emits only its final accumulated value strictly upon execution completion.",
+        "answerKey": "ANS_MulticastingObservables",
+        "sectionId": "sec_04"
+      },
+      {
+        "questionId": "q_04_34",
+        "question": "34. Custom RxJS Operators: Write out the structure for a custom RxJS operator that handles automatic exponential backoff retry logic only for 5xx HTTP errors.",
+        "questionKey": "QES_CustomRxJSOperator",
+        "answer": "Create an operator returning (source) => Observable<T>. Pipe the source into retryWhen. Inspect the error status. If 5xx, apply a timer that doubles its delay on each attempt. For 4xx errors, throw immediately to bypass retries.",
+        "answerKey": "ANS_CustomRxJSOperator",
+        "sectionId": "sec_04"
+      },
+      {
+        "questionId": "q_04_35",
+        "question": "35. shareReplay() Configuration: What are the dangers of calling shareReplay(1) without configuring refCount: true on an infinite stream?",
+        "questionKey": "QES_ShareReplayConfig",
+        "answer": "Calling shareReplay(1) without refCount: true on an infinite stream creates a memory leak. The internal ReplaySubject keeps the upstream subscription alive indefinitely, even after all subscribers leave. refCount ensures the source is cleanly disposed of.",
+        "answerKey": "ANS_ShareReplayConfig",
+        "sectionId": "sec_04"
+      },
+      {
+        "questionId": "q_04_36",
+        "question": "36. The Async Pipe Mechanics: What three internal actions does the async pipe execute upon component initialization, value emission, and destruction?",
+        "questionKey": "QES_AsyncPipeMechanics",
+        "answer": "Upon initialization, it subscribes to the Observable. When a new value emits, it triggers markForCheck() to ensure the component updates under OnPush. Upon component destruction, it automatically unsubscribes, completely preventing memory leaks without manual intervention.",
+        "answerKey": "ANS_AsyncPipeMechanics",
+        "sectionId": "sec_04"
+      },
+      {
+        "questionId": "q_04_37",
+        "question": "37. NgRx ComponentStore vs. Global Store: When architecting an enterprise dashboard, how do you decide between a localized ComponentStore / Signals state and a global Redux store?",
+        "questionKey": "QES_ComponentStoreVsGlobal",
+        "answer": "Use ComponentStore for localized, ephemeral state strictly tied to the dashboard's lifecycle. Use a global Redux store for shared, persistent state that impacts multiple features, requires cross-domain aggregations, or must be retained during navigation.",
+        "answerKey": "ANS_ComponentStoreVsGlobal",
+        "sectionId": "sec_04"
+      },
+      {
+        "questionId": "q_04_38",
+        "question": "38. State Race Conditions: How do you handle race conditions in an RxJS-driven multi-source dashboard where downstream emissions rely on the sequence of upstream completions?",
+        "questionKey": "QES_StateRaceConditions",
+        "answer": "Handle race conditions by leveraging concatMap to strictly queue interdependent API calls, forkJoin to wait for all upstream Observables to complete, or combineLatest paired with filter to ensure downstream emissions only trigger when data firmly resolves.",
+        "answerKey": "ANS_StateRaceConditions",
+        "sectionId": "sec_04"
+      },
+      {
+        "questionId": "q_04_39",
+        "question": "39. combineLatest Pitfalls: Why can combineLatest cause unexpected emissions? How do you prevent it from firing prematurely during initial data loads?",
+        "questionKey": "QES_CombineLatestPitfalls",
+        "answer": "combineLatest requires all source Observables to emit at least once before triggering. If one source is slow, it stalls. Prevent this by using startWith() on all sources, providing default initial values so the stream evaluates immediately.",
+        "answerKey": "ANS_CombineLatestPitfalls",
+        "sectionId": "sec_04"
+      },
+      {
+        "questionId": "q_04_40",
+        "question": "40. Backpressure Handling: How do you implement effective backpressure management in an Angular app receiving massive real-time data bursts via WebSockets?",
+        "questionKey": "QES_BackpressureHandling",
+        "answer": "Manage WebSocket backpressure using rate-limiting operators. Use auditTime to capture the latest burst value at intervals, or bufferTime to aggregate massive bursts into arrays, allowing Angular to render optimized chunks rather than thrashing the DOM.",
+        "answerKey": "ANS_BackpressureHandling",
+        "sectionId": "sec_04"
+      }
+    ]
+  },
+  {
+    "section": "Router Architecture & Micro-Frontends",
+    "sectionNameKey": "SEC_RouterArchitecture",
+    "sectionId": "sec_05",
+    "QnA": [
+      {
+        "questionId": "q_05_41",
+        "question": "41. CanMatch vs. CanActivate: Why was CanMatch introduced to replace CanLoad? How does CanMatch alter the route configuration evaluation flow?",
+        "questionKey": "QES_CanMatchVsCanActivate",
+        "answer": "CanMatch evaluates before matching, allowing the router to skip a config and fall back to alternative routes sharing the same path. CanActivate runs after matching, cancelling routing if failed. CanMatch is vital for role-based routing.",
+        "answerKey": "ANS_CanMatchVsCanActivate",
+        "sectionId": "sec_05"
+      },
+      {
+        "questionId": "q_05_42",
+        "question": "42. Route Serialization & Custom Matchers: How do you write a custom UrlMatcher to handle highly dynamic, multi-segmented e-commerce URLs that cannot be parsed by default parameters?",
+        "questionKey": "QES_RouteSerialization",
+        "answer": "Implement a custom UrlMatcher function in the route config. Parse the UrlSegment array manually using regex to extract dynamic data from complex URLs. Return a UrlMatchResult containing posParams, which the component reads via the ActivatedRoute.",
+        "answerKey": "ANS_RouteSerialization",
+        "sectionId": "sec_05"
+      },
+      {
+        "questionId": "q_05_43",
+        "question": "43. Module Federation Integration: How do you configure Webpack Module Federation or Esbuild to lazy-load remote micro-frontend entry points through the Angular Router?",
+        "questionKey": "QES_ModuleFederation",
+        "answer": "Use loadChildren pointing to a dynamic import(). Configure Webpack to expose the remote module. In the shell, point the import() to the remote URL utilizing functions like loadRemoteModule from @angular-architects/module-federation to compile the route seamlessly.",
+        "answerKey": "ANS_ModuleFederation",
+        "sectionId": "sec_05"
+      },
+      {
+        "questionId": "q_05_44",
+        "question": "44. Router States & Snapshots: Explain the structural difference between ActivatedRouteState and ActivatedRouteSnapshot. When must you subscribe to route parameters instead of reading the snapshot?",
+        "questionKey": "QES_RouterStatesSnapshots",
+        "answer": "ActivatedRouteSnapshot provides static data at component creation. Subscribe to ActivatedRoute parameters when the component remains active but the URL changes, ensuring the component reactively re-renders without destroying and rebuilding the DOM.",
+        "answerKey": "ANS_RouterStatesSnapshots",
+        "sectionId": "sec_05"
+      },
+      {
+        "questionId": "q_05_45",
+        "question": "45. Preloading Strategies: How do you build a custom route preloading strategy that only preloads modules when a user hovers over a specific link or based on network conditions?",
+        "questionKey": "QES_PreloadingStrategies",
+        "answer": "Extend PreloadingStrategy. Inside preload(), evaluate custom data on the route configuration. Incorporate RxJS to listen for hover actions or network idle events, returning the fn() execution to load the module, or of(null) to skip.",
+        "answerKey": "ANS_PreloadingStrategies",
+        "sectionId": "sec_05"
+      },
+      {
+        "questionId": "q_05_46",
+        "question": "46. State Persistence: How do you preserve component state across navigation events when utilizing a custom RouteReuseStrategy?",
+        "questionKey": "QES_StatePersistence",
+        "answer": "Implement RouteReuseStrategy. In shouldDetach, return true. In store, save the RouteHandle into a map. When navigating back, shouldAttach returns true, and retrieve provides the stored handle, restoring the exact DOM state without re-initialization.",
+        "answerKey": "ANS_StatePersistence",
+        "sectionId": "sec_05"
+      },
+      {
+        "questionId": "q_05_47",
+        "question": "47. Navigation Cancellation: What happens to unresolved HTTP requests spawned by a component if the user navigates away before the route transition completes? How do you cancel them?",
+        "questionKey": "QES_NavigationCancellation",
+        "answer": "Unresolved HTTP requests continue processing, wasting bandwidth. Cancel them by piping requests through takeUntilDestroyed(). When the router destroys the component during navigation, the lifecycle triggers, instantly aborting all pending network operations tied to that view.",
+        "answerKey": "ANS_NavigationCancellation",
+        "sectionId": "sec_05"
+      },
+      {
+        "questionId": "q_05_48",
+        "question": "48. Router Initial Navigation Block: Why would you configure initialNavigation: 'enabledBlocking'? What problem does this solve in Server-Side Rendering (SSR) environments?",
+        "questionKey": "QES_InitialNavigationBlock",
+        "answer": "initialNavigation: 'enabledBlocking' forces the router to fully resolve the initial route before bootstrapping the root component. In SSR, this prevents rendering a blank page or flashing un-hydrated content, ensuring the server responds with a constructed document.",
+        "answerKey": "ANS_InitialNavigationBlock",
+        "sectionId": "sec_05"
+      },
+      {
+        "questionId": "q_05_49",
+        "question": "49. Deeply Nested Route Guards: If an application evaluates nested child routes, in what exact sequence do CanActivateChild, CanDeactivate, and Resolve guards execute?",
+        "questionKey": "QES_NestedRouteGuards",
+        "answer": "Guards execute sequentially: 1) CanDeactivate (bottom-up), 2) CanLoad/CanMatch (top-down), 3) CanActivate (top-down), 4) CanActivateChild (top-down), and finally 5) Resolve (top-down) before instantiating the component.",
+        "answerKey": "ANS_NestedRouteGuards",
+        "sectionId": "sec_05"
+      },
+      {
+        "questionId": "q_05_50",
+        "question": "50. Dynamic Route Injection: How do you programmatically append or modify the active router configuration at runtime after an authentication step returns a user's permissions matrix?",
+        "questionKey": "QES_DynamicRouteInjection",
+        "answer": "Inject the Router and read router.config. Dynamically append route objects based on the permissions matrix. Finally, use router.resetConfig() to apply the updated array, enabling new paths or redirects instantly without reloading.",
+        "answerKey": "ANS_DynamicRouteInjection",
+        "sectionId": "sec_05"
+      }
+    ]
+  },
+  {
+    "section": "Component Architecture & Custom Directives",
+    "sectionNameKey": "SEC_ComponentArchitecture",
+    "sectionId": "sec_06",
+    "QnA": [
+      {
+        "questionId": "q_06_51",
+        "question": "51. ViewChild vs. ContentChild: Detail the differences regarding compilation phases and DOM query scopes when using @ViewChild (viewChild) versus @ContentChild (contentChild).",
+        "questionKey": "QES_ViewChildVsContentChild",
+        "answer": "@ViewChild queries elements within the component's template, available in ngAfterViewInit. @ContentChild queries elements projected via <ng-content>, available earlier in ngAfterContentInit. ViewChild handles internal DOM, whereas ContentChild interacts with external DOM injected via composition.",
+        "answerKey": "ANS_ViewChildVsContentChild",
+        "sectionId": "sec_06"
+      },
+      {
+        "questionId": "q_06_52",
+        "question": "52. Dynamic Component Insertion: How do you programmatically instantiate and render a component inside a specific template container using ViewContainerRef and ComponentRef?",
+        "questionKey": "QES_DynamicComponentInsertion",
+        "answer": "Inject ViewContainerRef. Use createComponent(MyComponent) on the container to instantiate the component and insert its view. Access the ComponentRef.instance to dynamically bind inputs, listen to outputs, or destroy the component programmatically when finished.",
+        "answerKey": "ANS_DynamicComponentInsertion",
+        "sectionId": "sec_06"
+      },
+      {
+        "questionId": "q_06_53",
+        "question": "53. Custom Structural Directives: Explain how to build a structural directive like *ngIf from scratch. How do TemplateRef and ViewContainerRef interact within its constructor?",
+        "questionKey": "QES_CustomStructuralDirectives",
+        "answer": "Inject TemplateRef and ViewContainerRef. When the condition is true, call viewContainerRef.createEmbeddedView(templateRef) to render the HTML. When false, call viewContainerRef.clear() to instantly remove the DOM elements, building custom conditional rendering logic.",
+        "answerKey": "ANS_CustomStructuralDirectives",
+        "sectionId": "sec_06"
+      },
+      {
+        "questionId": "q_06_54",
+        "question": "54. HostBinding and HostListener Optimization: What are the performance costs of overusing @HostBinding and @HostListener? What are the native DOM alternatives?",
+        "questionKey": "QES_HostBindingOptimization",
+        "answer": "Overusing these degrades performance because HostListener triggers global change detection, and HostBinding adds evaluation overhead. Optimize by using Renderer2 or ElementRef inside runOutsideAngular() to bind events directly, bypassing change detection for high-frequency updates.",
+        "answerKey": "ANS_HostBindingOptimization",
+        "sectionId": "sec_06"
+      },
+      {
+        "questionId": "q_06_55",
+        "question": "55. Web Components Interoperability: How do you export an Angular component as an independent Web Component using @angular/elements? What are the data-mapping rules?",
+        "questionKey": "QES_WebComponentsInteroperability",
+        "answer": "Use createCustomElement() to wrap the component, then register using customElements.define(). Angular @Input() properties map to native HTML attributes (camelCase to kebab-case). @Output() EventEmitters map to native CustomEvent dispatches, enabling framework-agnostic interoperability.",
+        "answerKey": "ANS_WebComponentsInteroperability",
+        "sectionId": "sec_06"
+      },
+      {
+        "questionId": "q_06_56",
+        "question": "56. Encapsulation Breakdown: Contrast ViewEncapsulation.Emulated, None, and ShadowDom. How does Angular enforce scoping attribute selectors during compilation?",
+        "questionKey": "QES_EncapsulationBreakdown",
+        "answer": "Emulated applies unique host attributes to elements, faking isolation. None injects styles globally. ShadowDom uses native browser Shadow DOM. Emulated ensures widespread compatibility, while ShadowDom strictly shields internal logic from global CSS overrides.",
+        "answerKey": "ANS_EncapsulationBreakdown",
+        "sectionId": "sec_06"
+      },
+      {
+        "questionId": "q_06_57",
+        "question": "57. ControlValueAccessor (CVA): Step-by-step, how do you implement a highly reusable, accessible custom form control component that integrates seamlessly with Reactive Forms?",
+        "questionKey": "QES_ControlValueAccessor",
+        "answer": "Implement ControlValueAccessor. Map writeValue() to update UI state. Call registerOnChange() to notify the parent form on updates. Call registerOnTouched() on blur. Provide the component in the NG_VALUE_ACCESSOR array to bind it to Reactive Forms.",
+        "answerKey": "ANS_ControlValueAccessor",
+        "sectionId": "sec_06"
+      },
+      {
+        "questionId": "q_06_58",
+        "question": "58. Content Projection Lifecycle Hooks: Which lifecycle hooks are safely guaranteed to have access to projected content versus standard view templates?",
+        "questionKey": "QES_ContentProjectionHooks",
+        "answer": "Projected content is safely accessible during and after ngAfterContentInit. Do not query projected content in ngOnInit, as DOM insertion hasn't finished. Standard view templates are safe after ngAfterViewInit.",
+        "answerKey": "ANS_ContentProjectionHooks",
+        "sectionId": "sec_06"
+      },
+      {
+        "questionId": "q_06_59",
+        "question": "59. Template-Driven vs. Reactive Internals: How do Reactive Forms handle value updates through immutable data tracks compared to the mutable form tracking inside Template-Driven forms?",
+        "questionKey": "QES_TemplateVsReactive",
+        "answer": "Reactive Forms are synchronous and immutable; setValue() instantly updates the model via direct data tracks. Template-Driven forms are asynchronous and mutable; directives listen to internal ngModel changes, taking an event loop tick to update properties.",
+        "answerKey": "ANS_TemplateVsReactive",
+        "sectionId": "sec_06"
+      },
+      {
+        "questionId": "q_06_60",
+        "question": "60. Component Inheritances vs. Composition: What are the compile-time limitations and architectural risks of extending large base component classes in Angular?",
+        "questionKey": "QES_InheritanceVsComposition",
+        "answer": "Extending large classes obscures dependency injection, tightly couples components, and makes testing fragile. The compiler struggles with deep inheritance. Composition (using injected services or structural directives) is vastly superior for scalable enterprise architecture.",
+        "answerKey": "ANS_InheritanceVsComposition",
+        "sectionId": "sec_06"
+      }
+    ]
+  },
+  {
+    "section": "Performance Tuning & Compilation Internals",
+    "sectionNameKey": "SEC_PerformanceTuning",
+    "sectionId": "sec_07",
+    "QnA": [
+      {
+        "questionId": "q_07_61",
+        "question": "61. Ivy Compilation Workflow: What happens step-by-step when the Ivy compiler transforms an HTML template into executable JavaScript instructions?",
+        "questionKey": "QES_IvyCompilation",
+        "answer": "Ivy analyzes the template and generates localized, sequential Javascript instructions (e.g., ɵɵelementStart). Instead of building massive data structures, these raw instructions execute directly during change detection to mutate the DOM, speeding up execution and tree-shaking.",
+        "answerKey": "ANS_IvyCompilation",
+        "sectionId": "sec_07"
+      },
+      {
+        "questionId": "q_07_62",
+        "question": "62. AOT vs. JIT Target Bundles: Why does Ahead-of-Time (AOT) compilation eliminate the need to ship @angular/compiler to the browser? What are the security benefits?",
+        "questionKey": "QES_AOTVsJIT",
+        "answer": "AOT pre-compiles templates into JavaScript instructions during the build step, excluding the heavy compiler library from the bundle. This reduces payload size and provides massive security benefits by preventing template injection vulnerabilities (XSS) at runtime.",
+        "answerKey": "ANS_AOTVsJIT",
+        "sectionId": "sec_07"
+      },
+      {
+        "questionId": "q_07_63",
+        "question": "63. Tree-Shaking Failures: What code patterns inside services or shared components prevent optimization tools (like Esbuild/Terser) from removing dead code?",
+        "questionKey": "QES_TreeShakingFailures",
+        "answer": "Tree-shaking fails when side-effects exist at the module level, such as executing global functions, relying on providedIn: NgModule, or using massive barrel files (index.ts) that force bundlers to evaluate interconnected classes, breaking code isolation.",
+        "answerKey": "ANS_TreeShakingFailures",
+        "sectionId": "sec_07"
+      },
+      {
+        "questionId": "q_07_64",
+        "question": "64. trackBy Component Internals: How does providing a trackBy function to *ngFor alter DOM manipulation constraints during structural updates?",
+        "questionKey": "QES_TrackByInternals",
+        "answer": "Without trackBy, *ngFor tracks object identity, destroying and recreating DOM nodes when array references change. trackBy allows Angular to track items logically via an ID, reusing DOM nodes and strictly updating changed bindings, saving CPU cycles.",
+        "answerKey": "ANS_TrackByInternals",
+        "sectionId": "sec_07"
+      },
+      {
+        "questionId": "q_07_65",
+        "question": "65. Memory Leak Analysis: How do you diagnose a memory leak caused by un-detached detached DOM elements inside custom Directives using Chrome DevTools?",
+        "questionKey": "QES_MemoryLeakAnalysis",
+        "answer": "Take a Heap Snapshot in Chrome DevTools. Filter for 'Detached HTMLElement'. Examine the retainer tree to find the Javascript variables holding the reference, typically caused by missing ngOnDestroy cleanups or unclosed RxJS subscriptions.",
+        "answerKey": "ANS_MemoryLeakAnalysis",
+        "sectionId": "sec_07"
+      },
+      {
+        "questionId": "q_07_66",
+        "question": "66. Differential Loading: How does Angular split modern ES modules from legacy polyfilled scripts during production build configurations?",
+        "questionKey": "QES_DifferentialLoading",
+        "answer": "Angular CLI compiles two bundles based on browserslist. Modern browsers download the lightweight bundle via <script type=\"module\">. Older browsers download the legacy bundle with polyfills via <script nomodule>, automatically optimizing download sizes.",
+        "answerKey": "ANS_DifferentialLoading",
+        "sectionId": "sec_07"
+      },
+      {
+        "questionId": "q_07_67",
+        "question": "67. Large Dataset Rendering: What strategies (such as Virtual Scrolling via the Angular CDK) would you implement to render a scrollable grid of 100,000 data rows smoothly?",
+        "questionKey": "QES_LargeDatasetRendering",
+        "answer": "Implement CDK Virtual Scrolling. Instead of rendering 100,000 DOM nodes, it dynamically computes scroll positions and renders only the visible subset. It reuses nodes, swapping data in memory to guarantee 60fps scrolling performance.",
+        "answerKey": "ANS_LargeDatasetRendering",
+        "sectionId": "sec_07"
+      },
+      {
+        "questionId": "q_07_68",
+        "question": "68. Bundle Splitting Optimization: How do you audit an application bundle using source-map-explorer to detect accidental inclusions of third-party libraries into the main chunk?",
+        "questionKey": "QES_BundleSplitting",
+        "answer": "Run ng build --source-map, then source-map-explorer dist/main.js. Analyze the visual treemap. If massive third-party libraries appear in the main chunk, isolate them using lazy-loaded modules or lightweight alternatives to optimize the Critical Rendering Path.",
+        "answerKey": "ANS_BundleSplitting",
+        "sectionId": "sec_07"
+      },
+      {
+        "questionId": "q_07_69",
+        "question": "69. Web Workers for Main-Thread Liberation: How do you offload CPU-intensive encryption or mathematical calculations out of the main Angular framework execution thread using Web Workers?",
+        "questionKey": "QES_WebWorkers",
+        "answer": "Generate a worker via Angular CLI. Move heavy logic to the worker file. Instantiate the Worker in the component, send data via postMessage(), and listen via onmessage. This liberates the main thread, preventing UI freezing.",
+        "answerKey": "ANS_WebWorkers",
+        "sectionId": "sec_07"
+      },
+      {
+        "questionId": "q_07_70",
+        "question": "70. Strict Template Type Checking: What internal type-safety flags can you toggle in tsconfig.json to enforce strict template evaluations during compilation?",
+        "questionKey": "QES_StrictTemplateChecking",
+        "answer": "Enable strictTemplates: true in tsconfig.json. This forces the compiler to rigorously check data types, nullability, and bindings in HTML, matching TypeScript strictness. It catches subtle template errors at compile-time that cause runtime crashes.",
+        "answerKey": "ANS_StrictTemplateChecking",
+        "sectionId": "sec_07"
+      }
+    ]
+  },
+  {
+    "section": "Forms & Complex Validation Architecture",
+    "sectionNameKey": "SEC_FormsValidation",
+    "sectionId": "sec_08",
+    "QnA": [
+      {
+        "questionId": "q_08_71",
+        "question": "71. Cross-Field Async Validators: How do you write an asynchronous validation function that checks multiple fields concurrently against a backend validation engine?",
+        "questionKey": "QES_CrossFieldAsync",
+        "answer": "Attach the async validator to the parent FormGroup. The validator evaluates multiple child values, debounces the network request, hits the API, and returns an error object on the group if the cross-field combination is invalid.",
+        "answerKey": "ANS_CrossFieldAsync",
+        "sectionId": "sec_08"
+      },
+      {
+        "questionId": "q_08_72",
+        "question": "72. Dynamic Form Schema Generation: How do you build an engine that parses an arbitrary JSON API schema and renders a fully type-safe Reactive Form at runtime?",
+        "questionKey": "QES_DynamicFormSchema",
+        "answer": "Iterate over the schema using FormBuilder. Push FormControl instances into a FormGroup dynamically. Bind the template to iterate over the group's controls, using structural directives (ngSwitch) to render mapped HTML inputs.",
+        "answerKey": "ANS_DynamicFormSchema",
+        "sectionId": "sec_08"
+      },
+      {
+        "questionId": "q_08_73",
+        "question": "73. FormArray Performance Pitfalls: Why do large nested FormArray structures suffer from massive performance degradation upon typing? How do you optimize them?",
+        "questionKey": "QES_FormArrayPerformance",
+        "answer": "Large nested FormArrays trigger aggressive deep-equality checks and valueChanges events on every keystroke. Optimize by setting updateOn: 'blur', detaching change detection for the parent group, and isolating array rows into standalone child components.",
+        "answerKey": "ANS_FormArrayPerformance",
+        "sectionId": "sec_08"
+      },
+      {
+        "questionId": "q_08_74",
+        "question": "74. Type-Safe Reactive Forms: Explain how Angular’s type-safe forms handle Partial types upon calling .patchValue() versus .setValue().",
+        "questionKey": "QES_TypeSafeForms",
+        "answer": "setValue() enforces strict typing; you must supply an object matching every control perfectly. patchValue() accepts a Partial type, allowing you to update specific fields safely while TypeScript guarantees the provided properties match defined types.",
+        "answerKey": "ANS_TypeSafeForms",
+        "sectionId": "sec_08"
+      },
+      {
+        "questionId": "q_08_75",
+        "question": "75. Form Status Mutation Tracking: How do you listen to and debounce value changes or status changes of a single nested control without triggering infinite feedback loops?",
+        "questionKey": "QES_FormMutationTracking",
+        "answer": "Listen to control.valueChanges, piped through debounceTime. If updating the control within the subscription, pass { emitEvent: false } to setValue() or patchValue(). This breaks the loop, ensuring the programmatic update doesn't re-trigger the listener.",
+        "answerKey": "ANS_FormMutationTracking",
+        "sectionId": "sec_08"
+      },
+      {
+        "questionId": "q_08_76",
+        "question": "76. Customizing Form Validation Triggers: How do you modify a form control to execute validation rules only on blur or submit events rather than on every keystroke?",
+        "questionKey": "QES_CustomValidationTriggers",
+        "answer": "When initializing the FormControl, pass the updateOn property in the options object: { updateOn: 'blur' } or 'submit'. This prevents expensive validators from running on every keystroke, significantly boosting application performance.",
+        "answerKey": "ANS_CustomValidationTriggers",
+        "sectionId": "sec_08"
+      },
+      {
+        "questionId": "q_08_77",
+        "question": "77. Inherited Validation States: How do you bubble up validation failures from a nested child ControlValueAccessor to a root parent FormGroup without explicit coupling?",
+        "questionKey": "QES_InheritedValidation",
+        "answer": "Provide your CVA component in the NG_VALIDATORS array. Implement the Validator interface's validate() method. When internal state is invalid, return the error object. Angular bubbles this error up to the parent FormGroup automatically.",
+        "answerKey": "ANS_InheritedValidation",
+        "sectionId": "sec_08"
+      },
+      {
+        "questionId": "q_08_78",
+        "question": "78. Disabling Form Segments: What is the correct way to disable a form control inside a reactive setup without breaking type inference rules or removing it from the model?",
+        "questionKey": "QES_DisablingFormSegments",
+        "answer": "Call control.disable() directly. Disabled controls are automatically excluded from the form's .value object. To read the full state, use .getRawValue(). Never use HTML disabled attributes with Reactive Forms to avoid conflicting warnings.",
+        "answerKey": "ANS_DisablingFormSegments",
+        "sectionId": "sec_08"
+      },
+      {
+        "questionId": "q_08_79",
+        "question": "79. Manual Control Injection: How do you dynamically insert or delete single controls from an active FormGroup without resetting the validation histories of adjacent elements?",
+        "questionKey": "QES_ManualControlInjection",
+        "answer": "Use formGroup.addControl() or removeControl(). Do not re-instantiate the entire form. Appending dynamically updates the group's validity instantly without wiping pristine or touched states from the controls that remained untouched.",
+        "answerKey": "ANS_ManualControlInjection",
+        "sectionId": "sec_08"
+      },
+      {
+        "questionId": "q_08_80",
+        "question": "80. Form Resets and Initial States: How does calling .reset() interact with default values supplied during the instantiation of a FormControl?",
+        "questionKey": "QES_FormResets",
+        "answer": "Calling .reset() wipes the control to null. If a default value was provided during instantiation, it is lost unless passed back: reset({ value: 'default' }). Modern forms use the nonNullable flag to automatically reset to initial values.",
+        "answerKey": "ANS_FormResets",
+        "sectionId": "sec_08"
+      }
+    ]
+  },
+  {
+    "section": "Server-Side Rendering (SSR), SSG, & Hydration",
+    "sectionNameKey": "SEC_SSRAndHydration",
+    "sectionId": "sec_09",
+    "QnA": [
+      {
+        "questionId": "q_09_81",
+        "question": "81. Non-Destructive Hydration: How does modern Angular client-side hydration reuse server-rendered DOM instead of destroying and re-rendering it?",
+        "questionKey": "QES_NonDestructiveHydration",
+        "answer": "Modern hydration traverses existing HTML nodes sent by the server and binds event listeners directly to them. It does not destroy the DOM, eliminating the flicker and significantly improving Core Web Vitals like Cumulative Layout Shift.",
+        "answerKey": "ANS_NonDestructiveHydration",
+        "sectionId": "sec_09"
+      },
+      {
+        "questionId": "q_09_82",
+        "question": "82. Hydration Mismatch Execution: What triggers a hydration mismatch error? How do you debug it, and what are the implications of adding ngSkipHydration?",
+        "questionKey": "QES_HydrationMismatch",
+        "answer": "A mismatch occurs when the server DOM differs from the client render. Debug using DevTools warnings. Adding ngSkipHydration forces Angular to fallback to destructive re-rendering for that specific node, isolating the mismatch.",
+        "answerKey": "ANS_HydrationMismatch",
+        "sectionId": "sec_09"
+      },
+      {
+        "questionId": "q_09_83",
+        "question": "83. PLATFORM_ID Shielding: Why must window/document references be guarded using isPlatformBrowser or isPlatformServer? What happens if they are not?",
+        "questionKey": "QES_PlatformIDShielding",
+        "answer": "Server environments lack browser APIs (window, document). Accessing them crashes the Node server. Shielding with isPlatformBrowser guarantees safe client execution. Unshielded access leads to complete SSR failures and 500 errors.",
+        "answerKey": "ANS_PlatformIDShielding",
+        "sectionId": "sec_09"
+      },
+      {
+        "questionId": "q_09_84",
+        "question": "84. State Transfer Optimization: How does TransferState work to prevent duplicate API requests from executing on both the server and client?",
+        "questionKey": "QES_StateTransfer",
+        "answer": "TransferState intercepts HTTP calls on the server, saving the JSON response into a script tag. Upon hydration, the client-side interceptor checks TransferState. If data exists, it uses it immediately instead of repeating the request.",
+        "answerKey": "ANS_StateTransfer",
+        "sectionId": "sec_09"
+      },
+      {
+        "questionId": "q_09_85",
+        "question": "85. Universal Application Engines: Explain how Angular SSR coordinates with Express or a serverless function to execute route rendering requests.",
+        "questionKey": "QES_UniversalEngines",
+        "answer": "Express passes the URL to Angular's SSR engine. Angular provisions a virtual server, compiles the requested route, fetches initial data, serializes application state, and responds with an HTML string which Express serves to the client.",
+        "answerKey": "ANS_UniversalEngines",
+        "sectionId": "sec_09"
+      },
+      {
+        "questionId": "q_09_86",
+        "question": "86. SEO & Meta Tag Management: How do you dynamically inject structured JSON-LD data and Open Graph meta tags into the document head during server-side execution?",
+        "questionKey": "QES_SEOMetaTags",
+        "answer": "Inject Meta and Title services to update tags. For JSON-LD, inject the DOCUMENT token, construct a <script type=\"application/ld+json\"> element dynamically, stringify schema data, and append it to the document head during server execution.",
+        "answerKey": "ANS_SEOMetaTags",
+        "sectionId": "sec_09"
+      },
+      {
+        "questionId": "q_09_87",
+        "question": "87. Static Site Generation (SSG): How do you configure the Angular builder to prerender dynamic parametrical routes into static HTML assets at build time?",
+        "questionKey": "QES_StaticSiteGeneration",
+        "answer": "Configure the prerender builder in angular.json. Provide a text file containing dynamic routes (like /product/1) to the routesFile option. Angular bootstraps the app for every route, rendering static HTML files deployable to CDNs.",
+        "answerKey": "ANS_StaticSiteGeneration",
+        "sectionId": "sec_09"
+      },
+      {
+        "questionId": "q_09_88",
+        "question": "88. Long-Running Task Blocking: Why does an uncompleted RxJS interval timer block the SSR engine from completing its render cycle? How do you isolate it?",
+        "questionKey": "QES_TaskBlocking",
+        "answer": "The SSR engine waits for the macro-task queue to clear before serializing HTML. An active interval keeps the queue alive, causing the render to timeout. Isolate it by initializing only on the client or wrapping in runOutsideAngular().",
+        "answerKey": "ANS_TaskBlocking",
+        "sectionId": "sec_09"
+      },
+      {
+        "questionId": "q_09_89",
+        "question": "89. HttpClient Interception in SSR: How do you adapt an HttpInterceptor to change root endpoints safely when a request executes on the server versus the browser?",
+        "questionKey": "QES_HttpClientSSR",
+        "answer": "Server requests require absolute URLs. In the interceptor, evaluate isPlatformServer. If true, prepend the request URL with the local server origin injected via an environment token, ensuring API calls resolve correctly within Node.",
+        "answerKey": "ANS_HttpClientSSR",
+        "sectionId": "sec_09"
+      },
+      {
+        "questionId": "q_09_90",
+        "question": "90. Standalone SSR Architecture: How has the removal of ServerModule in favor of functional configuration APIs simplified the deployment pipeline of modern Angular apps?",
+        "questionKey": "QES_StandaloneSSR",
+        "answer": "Removing ServerModule streamlines bootstrapping via provideServerRendering(). It eliminates redundant module files, allows functional configurations, and simplifies deployment by providing a unified server.ts entry point that integrates effortlessly with edge environments.",
+        "answerKey": "ANS_StandaloneSSR",
+        "sectionId": "sec_09"
+      }
+    ]
+  },
+  {
+    "section": "Security, Testing, & Enterprise Infrastructure",
+    "sectionNameKey": "SEC_SecurityTestingEnterprise",
+    "sectionId": "sec_10",
+    "QnA": [
+      {
+        "questionId": "q_10_91",
+        "question": "91. Cross-Site Scripting (XSS) Controls: How does Angular's internal DomSanitizer protect templates? When must you use SecurityContext explicitly?",
+        "questionKey": "QES_XSSControls",
+        "answer": "DomSanitizer automatically sanitizes template bindings, blocking scripts. To trust a raw HTML string from a secure database, inject DomSanitizer and call bypassSecurityTrustHtml(). SecurityContext enforces specific sanitization rules (HTML, Style, URL) before insertion.",
+        "answerKey": "ANS_XSSControls",
+        "sectionId": "sec_10"
+      },
+      {
+        "questionId": "q_10_92",
+        "question": "92. Content Security Policy (CSP): How do you configure Angular applications to support strict CSP rules, especially concerning inline style blocks and runtime scripts?",
+        "questionKey": "QES_ContentSecurityPolicy",
+        "answer": "Configure strict hash-based CSP for inline styles. In angular.json, enable inlineStyleLanguage optimizations. Configure the backend server to inject dynamic nonces into the index.html to allow strict script execution securely without unsafe-inline.",
+        "answerKey": "ANS_ContentSecurityPolicy",
+        "sectionId": "sec_10"
+      },
+      {
+        "questionId": "q_10_93",
+        "question": "93. Advanced HttpInterceptor Workflows: Write an architecture overview of an interceptor system that captures expired JWTs, stalls incoming requests, refreshes the token, and replays the original requests.",
+        "questionKey": "QES_AdvancedHttpInterceptor",
+        "answer": "Catch 401 errors. Use a BehaviorSubject to block subsequent requests. Call the refresh token API. Upon success, emit the new token, unblocking the queued requests. Clone the stalled requests with the new JWT and replay them seamlessly.",
+        "answerKey": "ANS_AdvancedHttpInterceptor",
+        "sectionId": "sec_10"
+      },
+      {
+        "questionId": "q_10_94",
+        "question": "94. CORS Handling: What is the root cause of a CORS error during deployment? How do you configure local development proxies (proxy.conf.json) versus server headers to mitigate it?",
+        "questionKey": "QES_CORSHandling",
+        "answer": "CORS errors occur when the API lacks proper cross-origin headers. In production, configure the backend server headers. Locally, configure proxy.conf.json to route requests through the Webpack dev server, bypassing restrictions by acting as a reverse proxy.",
+        "answerKey": "ANS_CORSHandling",
+        "sectionId": "sec_10"
+      },
+      {
+        "questionId": "q_10_95",
+        "question": "95. Component Harness Testing: Why is using Angular Component Harnesses in your Angular unit tests superior to executing standard fixture.nativeElement.querySelector calls?",
+        "questionKey": "QES_ComponentHarness",
+        "answer": "Harnesses abstract fragile DOM interactions. Instead of querying CSS classes, tests query logical APIs (buttonHarness.click()). This creates robust tests decoupled from volatile HTML and mechanically handles asynchronous change detection under the hood.",
+        "answerKey": "ANS_ComponentHarness",
+        "sectionId": "sec_10"
+      },
+      {
+        "questionId": "q_10_96",
+        "question": "96. Mocking Advanced Injectors: How do you test a service that relies heavily on a complex hierarchy of parent components and multiple dynamic global dependencies?",
+        "questionKey": "QES_MockingInjectors",
+        "answer": "Use TestBed.configureTestingModule providers. Supply mock objects via useValue or useClass. For nested child components, declare NO_ERRORS_SCHEMA or use ng-mocks to shallow-mount the tree, completely isolating the specific service test context.",
+        "answerKey": "ANS_MockingInjectors",
+        "sectionId": "sec_10"
+      },
+      {
+        "questionId": "q_10_97",
+        "question": "97. FakeAsync and Tick Mechanics: Explain how fakeAsync wraps microtasks and macrotasks. How does tick() manipulate mock passage of time during asynchronous code testing?",
+        "questionKey": "QES_FakeAsyncTick",
+        "answer": "fakeAsync wraps tests in a zone that freezes real time. Calling tick(500) mechanically simulates the passage of 500 milliseconds, instantly resolving setTimeout or RxJS timers within that window. This allows synchronous assertions of asynchronous code.",
+        "answerKey": "ANS_FakeAsyncTick",
+        "sectionId": "sec_10"
+      },
+      {
+        "questionId": "q_10_98",
+        "question": "98. Enterprise Monorepos: How do you construct build cache pipelines inside large monorepos (using tools like Nx) to optimize build cycles across shared Angular libraries?",
+        "questionKey": "QES_EnterpriseMonorepos",
+        "answer": "Utilize Nx for computation caching. The pipeline hashes source code. If a library hasn't changed, Nx skips compilation and retrieves the artifact from the cache. This drastically reduces CI/CD cycle times in large repositories.",
+        "answerKey": "ANS_EnterpriseMonorepos",
+        "sectionId": "sec_10"
+      },
+      {
+        "questionId": "q_10_99",
+        "question": "99. CI/CD Build Optimization: How do you configure production builds to execute dead-code elimination, source-map separation, and minification concurrently inside a pipeline?",
+        "questionKey": "QES_CICDBuildOptimization",
+        "answer": "Run ng build --configuration production. The CLI uses Esbuild, inherently executing dead-code elimination and minification. Disable sourceMap for faster cycles, configure strict bundle budgets in angular.json, and leverage distributed caching in CI.",
+        "answerKey": "ANS_CICDBuildOptimization",
+        "sectionId": "sec_10"
+      },
+      {
+        "questionId": "q_10_100",
+        "question": "100. Strict Monorepo Boundaries: How do you use boundary rule enforcement (e.g., eslint tags) to prevent feature libraries from accidentally importing private modules from peer domains?",
+        "questionKey": "QES_StrictMonorepoBoundaries",
+        "answer": "Configure @nx/enforce-module-boundaries in ESLint. Define strict tagging rules. Configure the linter to instantly throw errors if a feature library attempts to import deeply nested private files instead of routing strictly through the domain's public index.ts API.",
+        "answerKey": "ANS_StrictMonorepoBoundaries",
+        "sectionId": "sec_10"
+      }
+    ]
+  }
+]

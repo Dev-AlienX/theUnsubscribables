@@ -13,6 +13,7 @@ import { Observable } from 'rxjs';
 import { ConsoleLogComment } from '../shared/directive/console-log-comment';
 import hljs from 'highlight.js';
 import typescript from 'highlight.js/lib/languages/typescript';
+import xml from 'highlight.js/lib/languages/xml';
 
 @Component({
   selector: 'app-observable',
@@ -24,7 +25,6 @@ import typescript from 'highlight.js/lib/languages/typescript';
 })
 export class ObservableComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('tsCode') tsCode!: ElementRef;
-  @ViewChild('htmlCodeRef') htmlCodeRef!: ElementRef;
 
   observer1: any;
   observer2: any;
@@ -63,16 +63,7 @@ export class ObservableComponent implements OnInit, OnDestroy {
     this.observer2?.unsubscribe();
   }
 }`;
-  htmlCode = `
-<div class="output-container">
-  <ol>
-    @for (item of outputArray; track $index) {
-      <li>{{ item }}</li>
-    }
-  </ol>
-</div>`;
-
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+  constructor(@Inject(PLATFORM_ID) private platformId: Object, private el: ElementRef) {}
 
   observable$ = new Observable<any>((observer) => {
     this.outputArray.push(
@@ -124,8 +115,7 @@ export class ObservableComponent implements OnInit, OnDestroy {
   ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {
       hljs.registerLanguage('typescript', typescript);
-      hljs.highlightElement(this.tsCode.nativeElement);
-      hljs.highlightElement(this.htmlCodeRef.nativeElement);
+      hljs.highlightAll();
     }
   }
 

@@ -25,7 +25,6 @@ import typescript from 'highlight.js/lib/languages/typescript';
 })
 export class ObserverComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('tsCode') tsCode!: ElementRef;
-  @ViewChild('htmlCodeRef') htmlCodeRef!: ElementRef;
 
   subscription: any;
   outputArray: string[] = [];
@@ -61,14 +60,6 @@ export class ObserverComponent implements OnInit, OnDestroy {
     this.subscription?.unsubscribe();
   }
 }`;
-  htmlCode = `
-<div class="output-container">
-  <ol>
-    @for (item of outputArray; track $index) {
-      <li>{{ item }}</li>
-    }
-  </ol>
-</div>`;
 
   // Create an observable that emits values over time
   observable$ = new Observable<string>((subscriber) => {
@@ -103,7 +94,6 @@ export class ObserverComponent implements OnInit, OnDestroy {
     if (isPlatformBrowser(this.platformId)) {
       hljs.registerLanguage('typescript', typescript);
       hljs.highlightElement(this.tsCode.nativeElement);
-      hljs.highlightElement(this.htmlCodeRef.nativeElement);
     }
   }
 

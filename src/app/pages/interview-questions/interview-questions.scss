@@ -10,8 +10,16 @@
   margin: 0;
   padding-left: 20px; /* Optional: Removes default spacing */
 
-  .answer{
-    padding-left: 14px; /* Optional: Adds spacing for the answer */
+  .answer {
+    span {
+      color: var(--color-primary);
+    }
+  }
+
+  .question {
+    .questionNo {
+      color: var(--color-accent);
+    }
   }
 }
 
@@ -25,7 +33,6 @@
   margin: unset;
   padding: 10px;
   margin-bottom: 10px;
-
 }
 
 .section-title {
@@ -33,12 +40,14 @@
   padding: 10px;
   padding-left: 0px;
   width: 100%;
+  color: var(--color-primary);
   span {
     display: inline-block;
     position: relative; /* Adjust as needed for spacing */
     width: 14px; /* Adjust width as needed */
     height: 14px; /* Adjust height as needed */
     margin-right: 5px; /* Optional: Adds spacing between the icon and text */
+    color: yellow;
   }
   span::after {
     content: '⌄'; /* Injects new text */
@@ -62,7 +71,22 @@
   }
 }
 
+.main-title {
+  margin-top: 0px;
+}
 
-.main-title{
-    margin-top: 0px;
+.moreDetail {
+  display: none;
+}
+
+.article-qna:hover .moreDetail {
+  display: inline;
+  position: absolute;
+      right: 10px;
+    top: 0;
+    cursor: pointer;
+}
+
+.article-qna {
+  position: relative;
 }

@@ -1,15 +1,21 @@
-<main class="container question-answer-container">
+<div class="container question-answer-container">
   <h2 class="main-title">Angular Senior Engineer Interview Questions</h2>
   @for (item of questionAnswerMetaData$ | async; track item.sectionId) {
     <section class="question-answer-section">
-      <h3 class="section-title" (click)="item.active = !item.active"> <span [class.open]="item.active === true" ></span>{{ item.section }}</h3>
+      <h3 class="section-title" 
+          (click)="item.active = !item.active" 
+          (keydown.enter)="item.active = !item.active"
+          (keydown.space)="$event.preventDefault(); item.active = !item.active"
+          tabindex="0" 
+          role="button" 
+          [attr.aria-expanded]="item.active"> <span [class.open]="item.active === true" ></span>{{ item.section }}</h3>
       <ul class="question-answer-list" [class.collapsed]="item.active === true">
         @for (question of item.QnA; track question.questionId) {
-          <li class="question-answer-list-item">
+          <li class="question-answer-list-item" tabindex="0" >
             <article class="article-qna">
-              <p class="question">{{ question.question }}</p>
-              <p class="answer">{{ question.answer }}</p>
-              <!-- <button class="copy-button" (click)="getExample(question)">Copy</button> -->
+              <p class="question" SrNo>{{ question.question }}</p>
+              <p class="answer"><span>Answer : </span>{{ question.answer }}</p>
+              <button class="moreDetail" (click)="getExample(question)">More Detail</button>
             </article>
             <hr class="divider" />
           </li>
@@ -17,4 +23,4 @@
       </ul>
     </section>
   }
-</main>
+</div>

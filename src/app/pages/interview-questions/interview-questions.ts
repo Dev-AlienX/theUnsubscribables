@@ -1,11 +1,12 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { QuestionAnswerService } from '../../shared/service/question-answer-service';
+import { SrNo } from '../../shared/directive/sr-no';
 import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-interview-questions',
-  imports: [CommonModule],
+  imports: [CommonModule, SrNo],
   templateUrl: './interview-questions.html',
   styleUrl: './interview-questions.scss',
 })
@@ -26,5 +27,7 @@ export class InterviewQuestions implements OnInit {
 
   getExample(question: any): void {
     console.log(question);
+    const url = "https://www.google.com/search?q=";
+    window.open(url + question.question + "with code Example", '_blank');
   }
 }

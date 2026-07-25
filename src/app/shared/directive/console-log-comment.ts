@@ -15,10 +15,9 @@ import { isPlatformBrowser } from '@angular/common';
 })
 export class ConsoleLogComment implements OnInit {
   private elementRef = inject(ElementRef);
-  constructor(
-    private cdRef: ChangeDetectorRef,
-    @Inject(PLATFORM_ID) private platformId: Object,
-  ) {}
+  private cdRef = inject(ChangeDetectorRef);
+  private platformId = inject(PLATFORM_ID);
+  constructor() {}
   ngOnInit(): void {
     if (!isPlatformBrowser(this.platformId)) return;
     setTimeout(() => {

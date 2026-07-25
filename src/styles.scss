@@ -1,11 +1,15 @@
+@import 'highlight.js/styles/github-dark.css';
+@import url("./assets/icons.scss");
+
+
 /* You can add global styles to this file, and also import other style files */
 :root {
-  --color-dark-bg: #1f1f1f;
-  --color-primary: #dd0031;
-  --color-accent: #e535ab;
-  --color-light-text: #ffffff;
-  --color-dark-text: #212121;
-  --color-code-bg: #2a2a2a;
+  --color-dark-bg: #000000;
+  --color-primary: #fca311;
+  --color-accent: #fca311;
+  --color-light-text: #e5e5e5;
+  --color-dark-text: #14213d;
+  --color-code-bg: #14213d;
 
   --spacing-small: 10px;
   --spacing-medium: 20px;

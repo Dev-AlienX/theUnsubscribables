@@ -16,7 +16,7 @@ import typescript from 'highlight.js/lib/languages/typescript';
 })
 export class BehaviorSubjectComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('tsCode') tsCode!: ElementRef;
-  @ViewChild('htmlCodeRef') htmlCodeRef!: ElementRef;
+  // @ViewChild('htmlCodeRef') htmlCodeRef!: ElementRef;
 
   observer1: any;
   observer2: any;
@@ -67,14 +67,14 @@ export class BehaviorSubjectComponent  implements OnInit, OnDestroy{
     this.observer2?.unsubscribe();
   }
 }`;
-  htmlCode = `
-<div class="output-container">
-  <ol>
-    @for (item of outputArray; track $index) {
-      <li>{{ item }}</li>
-    }
-  </ol>
-</div>`;
+//   htmlCode = `
+// <div class="output-container">
+//   <ol>
+//     @for (item of outputArray; track $index) {
+//       <li>{{ item }}</li>
+//     }
+//   </ol>
+// </div>`;
 
   observable$ = new BehaviorSubject<any>(this.outputArray[0]);
   constructor(@Inject(PLATFORM_ID) private platformId: Object, private cdRef: ChangeDetectorRef) {}
@@ -124,7 +124,7 @@ export class BehaviorSubjectComponent  implements OnInit, OnDestroy{
     if (isPlatformBrowser(this.platformId)) {
       hljs.registerLanguage('typescript', typescript);
       hljs.highlightElement(this.tsCode.nativeElement);
-      hljs.highlightElement(this.htmlCodeRef.nativeElement);
+      // hljs.highlightElement(this.htmlCodeRef.nativeElement);
     }
   }
 

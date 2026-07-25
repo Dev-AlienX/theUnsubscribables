@@ -1,0 +1,184 @@
+[
+  {
+    "id": 1,
+    "name": "Creation Operators",
+    "definition": "",
+    "operators": [
+      "ajax",
+      "bindCallback",
+      "bindNodeCallback",
+      "defer",
+      "empty",
+      "from",
+      "fromEvent",
+      "fromEventPattern",
+      "generate",
+      "interval",
+      "of",
+      "range",
+      "throwError",
+      "timer",
+      "iif"
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Join Creation Operators",
+    "definition": "These are Observable creation operators that also have join functionality -- emitting values of multiple source Observables.",
+    "operators": [
+      "combineLatest",
+      "concat",
+      "forkJoin",
+      "merge",
+      "partition",
+      "race",
+      "zip"
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Transformation Operators",
+    "definition": "",
+    "operators": [
+      "buffer",
+      "bufferCount",
+      "bufferTime",
+      "bufferToggle",
+      "bufferWhen",
+      "concatMap",
+      "concatMapTo",
+      "exhaust",
+      "exhaustMap",
+      "expand",
+      "groupBy",
+      "map",
+      "mapTo",
+      "mergeMap",
+      "mergeMapTo",
+      "mergeScan",
+      "pairwise",
+      "partition",
+      "pluck",
+      "scan",
+      "switchScan",
+      "switchMap",
+      "switchMapTo",
+      "window",
+      "windowCount",
+      "windowTime",
+      "windowToggle",
+      "windowWhen"
+    ]
+  },
+  {
+    "id": 4,
+    "name": "Filtering Operators",
+    "definition": "",
+    "operators": [
+      "audit",
+      "auditTime",
+      "debounce",
+      "debounceTime",
+      "distinct",
+      "distinctUntilChanged",
+      "distinctUntilKeyChanged",
+      "elementAt",
+      "filter",
+      "first",
+      "ignoreElements",
+      "last",
+      "sample",
+      "sampleTime",
+      "single",
+      "skip",
+      "skipLast",
+      "skipUntil",
+      "skipWhile",
+      "take",
+      "takeLast",
+      "takeUntil",
+      "takeWhile",
+      "throttle",
+      "throttleTime"
+    ]
+  },
+  {
+    "id": 5,
+    "name": "Join Operators",
+    "definition": "Also see the Join Creation Operators section above.",
+    "operators": [
+      "combineLatestAll",
+      "concatAll",
+      "exhaustAll",
+      "mergeAll",
+      "switchAll",
+      "startWith",
+      "withLatestFrom"
+    ]
+  },
+  {
+    "id": 6,
+    "name": "Multicasting Operators",
+    "definition": "",
+    "operators": [
+      "multicast",
+      "publish",
+      "publishBehavior",
+      "publishLast",
+      "publishReplay",
+      "share"
+    ]
+  },
+  {
+    "id": 7,
+    "name": "Error Handling Operators",
+    "definition": "",
+    "operators": [
+      "catchError",
+      "retry",
+      "retryWhen"
+    ]
+  },
+  {
+    "id": 8,
+    "name": "Utility Operators",
+    "definition": "",
+    "operators": [
+      "tap",
+      "delay",
+      "delayWhen",
+      "dematerialize",
+      "materialize",
+      "observeOn",
+      "subscribeOn",
+      "timeInterval",
+      "timestamp",
+      "timeout",
+      "timeoutWith",
+      "toArray"
+    ]
+  },
+  {
+    "id": 9,
+    "name": "Conditional and Boolean Operators",
+    "definition": "",
+    "operators": [
+      "defaultIfEmpty",
+      "every",
+      "find",
+      "findIndex",
+      "isEmpty"
+    ]
+  },
+  {
+    "id": 10,
+    "name": "Mathematical and Aggregate Operators",
+    "definition": "",
+    "operators": [
+      "count",
+      "max",
+      "min",
+      "reduce"
+    ]
+  }
+]

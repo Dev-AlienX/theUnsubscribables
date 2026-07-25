@@ -1,0 +1,63 @@
+<nav class="left-nav" [class]="config()!.customClass">
+  <ul>
+    @for (item of config()!.items; track item.id) {
+      <li>
+        <!-- <a [routerLink]="item.routerLink" routerLinkActive="active">{{ item.name }}</a> -->
+        <div class="flex flexSpaceBetween">
+          <a
+            class="navItems"
+            [class.subnavOpen]="item.isOpen"
+            [routerLink]="item.routerLink"
+            routerLinkActive="active"
+            >{{ item.name | uppercase }}</a
+          >
+          @if (item.subnav.length > 0) {
+            <a
+              class="material-symbols-outlined"
+              [class.open]="item.isOpen"
+              (click)="subnavOpen(item)"
+              >arrow_right
+            </a>
+          }
+        </div>
+        @if (item.subnav && item.isOpen) {
+          <ul class="subnav">
+            @for (subItem of item.subnav; track subItem.id) {
+              <li>
+                <div class="flex flexSpaceBetween">
+                  <a
+                    [routerLink]="[item.routerLink, subItem.path]"
+                    class="item"
+                    routerLinkActive="active"
+                    >{{ subItem.name | uppercase }}</a
+                  >
+                  @if (subItem.operators.length > 0) {
+                    <a
+                      class="material-symbols-outlined"
+                      [class.open]="subItem.isOpen"
+                      (click)="subnavOpen(subItem)"
+                      >arrow_right</a
+                    >
+                  }
+                </div>
+
+                @if (subItem.operators && subItem.isOpen) {
+                  <ul class="operators">
+                    @for (operators of subItem.operators; track operators) {
+                      <!-- <a [attr.href]="'#' + operators" class="item">{{ operators}}</a> -->
+                      <a
+                        (click)="scrollToElement(operators, subItem.path); $event.preventDefault()"
+                        href="#"
+                        >{{ operators }}</a
+                      >
+                    }
+                  </ul>
+                }
+              </li>
+            }
+          </ul>
+        }
+      </li>
+    }
+  </ul>
+</nav>

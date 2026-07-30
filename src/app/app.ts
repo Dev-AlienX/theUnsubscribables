@@ -8,10 +8,13 @@ import {
 import { RouterModule } from '@angular/router';
 import { Navbar, navbarConfig, navItem } from './shared/components/navbar/navbar';
 import { SharedCommonService } from './shared/service/shared-common-service';
+import { FloatingNavButton } from './shared/components/floating-nav-button/floating-nav-button';
+import { FullPageNav } from './shared/components/full-page-nav/full-page-nav';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterModule, Navbar],
+  standalone: true,
+  imports: [RouterModule, Navbar, FloatingNavButton, FullPageNav],
   templateUrl: './app.html',
   styleUrl: './app.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -62,3 +65,4 @@ export class App implements OnInit {
     this.navbarConfig.items.splice(index + 1, 0, data);
   }
 }
+

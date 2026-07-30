@@ -1,0 +1,8 @@
+<div class="full-page-nav" [class.open]="isNavOpen()">
+  <button class="close-btn" (click)="closeNav()">
+    <span class="material-symbols-outlined">
+      close
+    </span>
+  </button>
+  <app-navbar [config]="navbarConfig"></app-navbar>
+</div>

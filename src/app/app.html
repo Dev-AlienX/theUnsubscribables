@@ -6,7 +6,9 @@
 </header>
 
 <div class="main-container">
-  <app-navbar [config]="navbarConfig"></app-navbar>
+  <div class="desktop-nav">
+    <app-navbar [config]="navbarConfig"></app-navbar>
+  </div>
 
   <main class="main-content">
     <router-outlet></router-outlet>
@@ -16,3 +18,7 @@
 <footer class="footer">
   <p>&nbsp;</p>
 </footer>
+
+<app-floating-nav-button></app-floating-nav-button>
+<app-full-page-nav [navbarConfig]="navbarConfig"></app-full-page-nav>
+

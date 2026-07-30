@@ -1,0 +1,39 @@
+:host {
+  display: none; // Hidden by default
+}
+
+.floating-nav-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+
+  button {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: var(--primary-color, #007bff);
+    color: var(--text-color-light, #fff);
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    cursor: grab;
+
+    &:active {
+      cursor: grabbing;
+    }
+
+    .material-symbols-outlined {
+      font-size: 20px;
+    }
+  }
+}
+
+// Show only on mobile devices
+@media (max-width: 768px) {
+  :host {
+    display: block;
+  }
+}

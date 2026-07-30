@@ -26,6 +26,7 @@ import { UpperCasePipe } from '@angular/common';
 
 @Component({
   selector: 'app-navbar',
+  standalone: true,
   imports: [RouterModule, UpperCasePipe],
   templateUrl: './navbar.html',
   styleUrl: './navbar.scss',
@@ -44,17 +45,7 @@ export class Navbar implements OnInit {
     }
   }
 
-  scrollToElement(child: any, parent: any): void {
-    // const containerEl = document.getElementById(parent);
-    // const targetEl = document.getElementById(child);
-    // if (containerEl && targetEl) {
-    //   // Calculate how far the target is from the top of the container
-    //   const targetTop = containerEl.offsetTop;
-
-    //   // Scroll the container directly
-    //   targetEl.scrollTop = 0;
-
-    // }
+  scrollToElement(child: any): void {
     const element = document.getElementById(child);
     if (element) {
       element.scrollIntoView();

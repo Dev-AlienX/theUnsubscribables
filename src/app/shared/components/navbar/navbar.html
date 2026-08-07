@@ -2,13 +2,13 @@
   <ul>
     @for (item of config()!.items; track item.id) {
       <li>
-        <!-- <a [routerLink]="item.routerLink" routerLinkActive="active">{{ item.name }}</a> -->
         <div class="flex flexSpaceBetween">
           <a
             class="navItems"
             [class.subnavOpen]="item.isOpen"
             [routerLink]="item.routerLink"
             routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
             >{{ item.name | uppercase }}</a
           >
           @if (item.subnav.length > 0) {
@@ -20,11 +20,13 @@
             </a>
           }
         </div>
+        
         @if (item.subnav && item.isOpen) {
           <ul class="subnav">
             @for (subItem of item.subnav; track subItem.id) {
               <li>
                 <div class="flex flexSpaceBetween">
+                  <!-- Resolves reliably to: /operators/transformationOperators -->
                   <a
                     [routerLink]="[item.routerLink, subItem.path]"
                     class="item"
@@ -43,13 +45,17 @@
 
                 @if (subItem.operators && subItem.isOpen) {
                   <ul class="operators">
-                    @for (operators of subItem.operators; track operators) {
-                      <!-- <a [attr.href]="'#' + operators" class="item">{{ operators}}</a> -->
-                      <a
-                        (click)="scrollToElement(operators, subItem.path); $event.preventDefault()"
-                        href="#"
-                        >{{ operators }}</a
-                      >
+                    @for (operator of subItem.operators; track operator) {
+                      <li>
+                        <!-- Clean handling: Uses routerLink with fragments natively -->
+                        <a 
+                          [routerLink]="[item.routerLink, subItem.path]" 
+                          [fragment]="operator"
+                          class="item"
+                          (click)="scrollToElement(operator)">
+                          {{ operator }}
+                        </a>
+                      </li>
                     }
                   </ul>
                 }

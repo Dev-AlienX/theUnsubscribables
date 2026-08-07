@@ -1,6 +1,6 @@
 import { Component, inject, Input, Signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NavStateService } from '../../service/nav-state.service';
+import { NavStateService } from '../../service/nav-state';
 import { Navbar, navbarConfig } from '../navbar/navbar';
 
 @Component({
